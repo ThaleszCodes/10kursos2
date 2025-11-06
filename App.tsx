@@ -3,7 +3,7 @@ import { AnimatedSection } from './components/AnimatedSection';
 import { CountdownTimer } from './components/CountdownTimer';
 import { MarketingIcon, DesignIcon, FinanceIcon, AestheticsIcon, CodeIcon, EnglishIcon, InfinityIcon, NoMonthlyFeeIcon, CertificateIcon, UpdatesIcon, DevicesIcon, ShieldIcon, StarIcon, PaymentIcon, EmailIcon, RocketIcon } from './components/icons';
 
-const KIWIFY_CHECKOUT_URL = "https://pay.kiwify.com.br/yhctuZz";
+const KIWIFY_CHECKOUT_URL = "https://pay.kiwify.com.br/sjNfSYZ";
 
 interface CTAButtonProps {
   children: React.ReactNode;
