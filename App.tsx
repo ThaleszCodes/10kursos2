@@ -3,7 +3,7 @@ import { AnimatedSection } from './components/AnimatedSection';
 import { CountdownTimer } from './components/CountdownTimer';
 import { MarketingIcon, DesignIcon, FinanceIcon, AestheticsIcon, CodeIcon, EnglishIcon, InfinityIcon, NoMonthlyFeeIcon, CertificateIcon, UpdatesIcon, DevicesIcon, ShieldIcon, StarIcon, PaymentIcon, EmailIcon, RocketIcon } from './components/icons';
 
-const KIWIFY_CHECKOUT_URL = "https://pay.kiwify.com.br/sjNfSYZ";
+const KIWIFY_CHECKOUT_URL = "https://pay.kiwify.com.br/yhctuZz";
 
 interface CTAButtonProps {
   children: React.ReactNode;
@@ -26,11 +26,26 @@ const App: React.FC = () => {
   const [checkoutUrl, setCheckoutUrl] = useState(KIWIFY_CHECKOUT_URL);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const affiliateId = params.get('afid');
+    // Pega todos os parâmetros da URL da página atual (ex: ?afid=...&src=...)
+    const pageParams = new URLSearchParams(window.location.search);
+    const affiliateId = pageParams.get('afid');
+    const sourceId = pageParams.get('src');
+
+    // Cria um objeto URL para manipular os parâmetros do link de checkout facilmente
+    const checkoutUrlObject = new URL(KIWIFY_CHECKOUT_URL);
+
+    // Se encontrou um 'afid', adiciona ao link de checkout
     if (affiliateId) {
-      setCheckoutUrl(`${KIWIFY_CHECKOUT_URL}?afid=${affiliateId}`);
+      checkoutUrlObject.searchParams.append('afid', affiliateId);
     }
+    
+    // Se encontrou um 'src', adiciona também ao link de checkout
+    if (sourceId) {
+      checkoutUrlObject.searchParams.append('src', sourceId);
+    }
+
+    // Atualiza o estado com a URL final (com os parâmetros, se existirem)
+    setCheckoutUrl(checkoutUrlObject.toString());
   }, []);
 
   return (
