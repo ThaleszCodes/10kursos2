@@ -70,7 +70,7 @@ const App: React.FC = () => {
               <span className="text-white">1 SÓ INVESTIMENTO.</span>
             </h1>
             <p className="max-w-2xl mx-auto mt-6 text-lg text-gray-300 md:text-xl">
-              Aprenda qualquer coisa, quando quiser. Acesso vitalício por apenas <span className="font-bold text-white">R$29,90</span>.
+              Aprenda qualquer coisa, quando quiser. Acesso vitalício por apenas <span className="font-bold text-white">R$10,00</span>.
             </p>
             <p className="mt-6 text-lg font-semibold text-green-400 text-glow">
               Mais de R$192.218.328,00 em cursos...
@@ -156,7 +156,7 @@ const App: React.FC = () => {
                 <p className="my-4 text-4xl font-bold md:text-6xl">
                   <span className="text-gray-500 line-through">De R$79,90</span>
                   <br/>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-blue-400">Por apenas R$29,90</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-blue-400">Por apenas R$10,00</span>
                 </p>
                 <p className="text-lg text-gray-300">Pagamento único, acesso para a vida toda.</p>
                 <CountdownTimer />
@@ -254,7 +254,7 @@ const App: React.FC = () => {
               </p>
             </AnimatedSection>
             <AnimatedSection delay={0.2}>
-              <p className="mt-6 text-2xl font-bold text-white">Acesso Vitalício por Apenas <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">R$29,90</span></p>
+              <p className="mt-6 text-2xl font-bold text-white">Acesso Vitalício por Apenas <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">R$10,00</span></p>
             </AnimatedSection>
             <AnimatedSection delay={0.4}>
               <div className="mt-10">
