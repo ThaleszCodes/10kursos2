@@ -1,9 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { AnimatedSection } from './components/AnimatedSection';
 import { CountdownTimer } from './components/CountdownTimer';
 import { MarketingIcon, DesignIcon, FinanceIcon, AestheticsIcon, CodeIcon, EnglishIcon, InfinityIcon, NoMonthlyFeeIcon, CertificateIcon, UpdatesIcon, DevicesIcon, ShieldIcon, StarIcon, PaymentIcon, EmailIcon, RocketIcon } from './components/icons';
 
 const KIWIFY_CHECKOUT_URL = "https://pay.kiwify.com.br/sjNfSYZ";
+
+// Preserve affiliate attribution before the first render of every checkout button.
+export const buildCheckoutUrl = (search: string): string => {
+  const pageParams = new URLSearchParams(search);
+  const checkout = new URL(KIWIFY_CHECKOUT_URL);
+  const allowedParams = [
+    'afid', 'src', 'sck', 'utm_source', 'utm_medium', 'utm_campaign',
+    'utm_term', 'utm_content', 's1', 's2', 's3',
+  ];
+  for (const key of allowedParams) {
+    const value = pageParams.get(key)?.trim();
+    if (value) checkout.searchParams.set(key, value);
+  }
+  return checkout.toString();
+};
 
 interface CTAButtonProps {
   children: React.ReactNode;
@@ -23,30 +38,9 @@ const CTAButton: React.FC<CTAButtonProps> = ({ children, className = '', href })
 );
 
 const App: React.FC = () => {
-  const [checkoutUrl, setCheckoutUrl] = useState(KIWIFY_CHECKOUT_URL);
-
-  useEffect(() => {
-    // Pega todos os parâmetros da URL da página atual (ex: ?afid=...&src=...)
-    const pageParams = new URLSearchParams(window.location.search);
-    const affiliateId = pageParams.get('afid');
-    const sourceId = pageParams.get('src');
-
-    // Cria um objeto URL para manipular os parâmetros do link de checkout facilmente
-    const checkoutUrlObject = new URL(KIWIFY_CHECKOUT_URL);
-
-    // Se encontrou um 'afid', adiciona ao link de checkout
-    if (affiliateId) {
-      checkoutUrlObject.searchParams.append('afid', affiliateId);
-    }
-    
-    // Se encontrou um 'src', adiciona também ao link de checkout
-    if (sourceId) {
-      checkoutUrlObject.searchParams.append('src', sourceId);
-    }
-
-    // Atualiza o estado com a URL final (com os parâmetros, se existirem)
-    setCheckoutUrl(checkoutUrlObject.toString());
-  }, []);
+  const checkoutUrl = buildCheckoutUrl(
+    typeof window === 'undefined' ? '' : window.location.search
+  );
 
   return (
     <div className="bg-[#0D0518] text-gray-200 overflow-x-hidden">
