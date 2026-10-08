@@ -3,12 +3,21 @@ import { AnimatedSection } from './components/AnimatedSection';
 import { CountdownTimer } from './components/CountdownTimer';
 import { MarketingIcon, DesignIcon, FinanceIcon, AestheticsIcon, CodeIcon, EnglishIcon, InfinityIcon, NoMonthlyFeeIcon, CertificateIcon, UpdatesIcon, DevicesIcon, ShieldIcon, StarIcon, PaymentIcon, EmailIcon, RocketIcon } from './components/icons';
 
-const KIWIFY_CHECKOUT_URL = "https://pay.kiwify.com.br/sjNfSYZ";
+const OFFERS = {
+  principal: { price: 'R$10,00', checkout: 'https://pay.kiwify.com.br/sjNfSYZ' },
+  media: { price: 'R$23,90', checkout: 'https://pay.kiwify.com.br/KSYOPLi' },
+  alta: { price: 'R$34,90', checkout: 'https://pay.kiwify.com.br/n6qh8ad' },
+};
+
+export const getOffer = (search: string) => {
+  const key = new URLSearchParams(search).get('oferta');
+  return key === 'media' || key === 'alta' ? OFFERS[key] : OFFERS.principal;
+};
 
 // Preserve affiliate attribution before the first render of every checkout button.
 export const buildCheckoutUrl = (search: string): string => {
   const pageParams = new URLSearchParams(search);
-  const checkout = new URL(KIWIFY_CHECKOUT_URL);
+  const checkout = new URL(getOffer(search).checkout);
   const allowedParams = [
     'afid', 'src', 'sck', 'utm_source', 'utm_medium', 'utm_campaign',
     'utm_term', 'utm_content', 's1', 's2', 's3',
@@ -38,9 +47,15 @@ const CTAButton: React.FC<CTAButtonProps> = ({ children, className = '', href })
 );
 
 const App: React.FC = () => {
-  const checkoutUrl = buildCheckoutUrl(
-    typeof window === 'undefined' ? '' : window.location.search
-  );
+  const search = typeof window === 'undefined' ? '' : window.location.search;
+  const offer = getOffer(search);
+  const checkoutUrl = buildCheckoutUrl(search);
+  React.useEffect(() => {
+    document.title = `ACERVO NEWGEN — +10 mil cursos por apenas ${offer.price}!`;
+    document.querySelector('meta[name="description"]')?.setAttribute(
+      'content', `Conheça o Acervo NewGen. Cursos e materiais por ${offer.price}.`
+    );
+  }, [offer.price]);
 
   return (
     <div className="bg-[#0D0518] text-gray-200 overflow-x-hidden">
@@ -64,7 +79,7 @@ const App: React.FC = () => {
               <span className="text-white">1 SÓ INVESTIMENTO.</span>
             </h1>
             <p className="max-w-2xl mx-auto mt-6 text-lg text-gray-300 md:text-xl">
-              Aprenda qualquer coisa, quando quiser. Acesso vitalício por apenas <span className="font-bold text-white">R$10,00</span>.
+              Aprenda qualquer coisa, quando quiser. Acesso vitalício por apenas <span className="font-bold text-white">{offer.price}</span>.
             </p>
             <p className="mt-6 text-lg font-semibold text-green-400 text-glow">
               Mais de R$192.218.328,00 em cursos...
@@ -150,7 +165,7 @@ const App: React.FC = () => {
                 <p className="my-4 text-4xl font-bold md:text-6xl">
                   <span className="text-gray-500 line-through">De R$79,90</span>
                   <br/>
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-blue-400">Por apenas R$10,00</span>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-blue-400">Por apenas {offer.price}</span>
                 </p>
                 <p className="text-lg text-gray-300">Pagamento único, acesso para a vida toda.</p>
                 <CountdownTimer />
@@ -248,7 +263,7 @@ const App: React.FC = () => {
               </p>
             </AnimatedSection>
             <AnimatedSection delay={0.2}>
-              <p className="mt-6 text-2xl font-bold text-white">Acesso Vitalício por Apenas <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">R$10,00</span></p>
+              <p className="mt-6 text-2xl font-bold text-white">Acesso Vitalício por Apenas <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">{offer.price}</span></p>
             </AnimatedSection>
             <AnimatedSection delay={0.4}>
               <div className="mt-10">
