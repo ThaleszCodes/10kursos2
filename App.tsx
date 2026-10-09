@@ -1,7 +1,8 @@
 import React from 'react';
 import { AnimatedSection } from './components/AnimatedSection';
+import { MetaPixelConsent, hasMetaPixelConfigured, openPrivacyPreferences, trackCheckoutClick } from './components/Tracking';
 import { CountdownTimer } from './components/CountdownTimer';
-import { MarketingIcon, DesignIcon, FinanceIcon, AestheticsIcon, CodeIcon, EnglishIcon, InfinityIcon, NoMonthlyFeeIcon, CertificateIcon, UpdatesIcon, DevicesIcon, ShieldIcon, StarIcon, PaymentIcon, EmailIcon, RocketIcon } from './components/icons';
+import { MarketingIcon, DesignIcon, FinanceIcon, AestheticsIcon, CodeIcon, EnglishIcon, InfinityIcon, NoMonthlyFeeIcon, CertificateIcon, UpdatesIcon, DevicesIcon, ShieldIcon, PaymentIcon, EmailIcon, RocketIcon } from './components/icons';
 
 const OFFERS = {
   principal: { price: 'R$14,90', checkout: 'https://pay.kiwify.com.br/sjNfSYZ' },
@@ -33,11 +34,14 @@ interface CTAButtonProps {
   children: React.ReactNode;
   className?: string;
   href: string;
+  placement: string;
+  offerKey: string;
 }
 
-const CTAButton: React.FC<CTAButtonProps> = ({ children, className = '', href }) => (
+const CTAButton: React.FC<CTAButtonProps> = ({ children, className = '', href, placement, offerKey }) => (
   <a
     href={href}
+    onClick={() => trackCheckoutClick(offerKey, placement)}
     target="_blank"
     rel="noopener noreferrer"
     className={`inline-block px-8 py-4 text-lg font-bold text-white uppercase transition-all duration-300 rounded-full shadow-lg transform hover:scale-105 hover:shadow-2xl ${className}`}
@@ -50,6 +54,7 @@ const App: React.FC = () => {
   const search = typeof window === 'undefined' ? '' : window.location.search;
   const offer = getOffer(search);
   const checkoutUrl = buildCheckoutUrl(search);
+  const offerKey = new URLSearchParams(search).get('oferta') || 'principal';
   React.useEffect(() => {
     document.title = `ACERVO NEWGEN — +10 mil cursos por apenas ${offer.price}!`;
     document.querySelector('meta[name="description"]')?.setAttribute(
@@ -85,7 +90,7 @@ const App: React.FC = () => {
               Mais de R$192.218.328,00 em cursos...
             </p>
             <div className="mt-10">
-              <CTAButton href={checkoutUrl} className="bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 glow-shadow animate-pulse">
+              <CTAButton href={checkoutUrl} placement="hero" offerKey={offerKey} className="bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 glow-shadow animate-pulse">
                 QUERO O NEWGEN AGORA
               </CTAButton>
             </div>
@@ -170,7 +175,7 @@ const App: React.FC = () => {
                 <p className="text-lg text-gray-300">Pagamento único, acesso para a vida toda.</p>
                 <CountdownTimer />
                 <div className="mt-8">
-                  <CTAButton href={checkoutUrl} className="bg-gradient-to-r from-pink-600 to-purple-600 glow-shadow">
+                  <CTAButton href={checkoutUrl} placement="offer" offerKey={offerKey} className="bg-gradient-to-r from-pink-600 to-purple-600 glow-shadow">
                     QUERO APROVEITAR A OFERTA
                   </CTAButton>
                 </div>
@@ -179,30 +184,37 @@ const App: React.FC = () => {
           </div>
         </section>
 
-        {/* Testimonials Section */}
+        {/* Testimonials Section — keep verified text, remove stock portraits and decorative 5-star ratings */}
         <section className="py-20 bg-[#0D0518]">
           <div className="container px-4 mx-auto">
             <AnimatedSection>
-              <h2 className="text-3xl font-bold text-center md:text-4xl text-glow">Quem já entrou, recomenda</h2>
+              <div className="mx-auto max-w-2xl text-center">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-purple-300">Experiências com o acervo</p>
+                <h2 className="mt-3 text-3xl font-bold md:text-4xl">O que nossos clientes dizem</h2>
+                <p className="mt-3 text-sm text-gray-400">Depoimentos compartilhados por quem já conheceu o New Gen.</p>
+              </div>
             </AnimatedSection>
-            <div className="grid max-w-4xl grid-cols-1 gap-8 mx-auto mt-12 md:grid-cols-2">
+            <div className="mx-auto mt-10 grid max-w-4xl grid-cols-1 gap-4 md:grid-cols-2">
               {[
-                { name: 'Juliana S.', text: 'Incrível! Nunca imaginei ter tanto conteúdo por um preço tão baixo. Já comecei a aplicar o que aprendi em design e meus freelas decolaram!', avatar: 'https://i.pravatar.cc/100?u=a042581f4e29026704d' },
-                { name: 'Marcos P.', text: 'O melhor investimento que fiz na minha carreira. Os cursos de programação são super atualizados. O acesso vitalício é a cereja do bolo.', avatar: 'https://i.pravatar.cc/100?u=a042581f4e29026705d' },
+                { name: 'Juliana S.', text: 'Incrível! Nunca imaginei ter tanto conteúdo por um preço tão baixo. Já comecei a aplicar o que aprendi em design e meus freelas decolaram!' },
+                { name: 'Marcos P.', text: 'O melhor investimento que fiz na minha carreira. Os cursos de programação são super atualizados. O acesso vitalício é a cereja do bolo.' },
               ].map((testimonial, index) => (
-                <AnimatedSection key={index} delay={index * 0.2}>
-                  <div className="p-6 space-y-4 bg-gray-900/50 border border-purple-800/50 rounded-2xl">
-                    <div className="flex items-center space-x-4">
-                      <img src={testimonial.avatar} alt={testimonial.name} className="w-12 h-12 rounded-full" />
-                      <div>
-                        <h4 className="font-bold">{testimonial.name}</h4>
-                        <div className="flex text-yellow-400">
-                          {[...Array(5)].map((_, i) => <StarIcon key={i} />)}
-                        </div>
-                      </div>
+                <AnimatedSection key={testimonial.name} delay={index * 0.1}>
+                  <figure className="flex h-full flex-col justify-between rounded-2xl border border-white/10 bg-white/[0.035] p-6 md:p-8">
+                    <div>
+                      <span aria-hidden="true" className="font-serif text-5xl leading-none text-purple-300">“</span>
+                      <blockquote className="mt-1 text-base leading-8 text-gray-200">{testimonial.text}</blockquote>
                     </div>
-                    <p className="text-gray-400">"{testimonial.text}"</p>
-                  </div>
+                    <figcaption className="mt-6 flex items-center gap-3 border-t border-white/10 pt-5">
+                      <span aria-hidden="true" className="flex h-10 w-10 items-center justify-center rounded-full border border-purple-400/30 bg-purple-400/10 text-sm font-bold text-purple-200">
+                        {testimonial.name.split(' ').map(part => part.charAt(0)).join('').slice(0, 2)}
+                      </span>
+                      <div>
+                        <p className="text-sm font-semibold text-white">{testimonial.name}</p>
+                        <p className="text-xs text-gray-400">Depoimento de cliente</p>
+                      </div>
+                    </figcaption>
+                  </figure>
                 </AnimatedSection>
               ))}
             </div>
@@ -267,7 +279,7 @@ const App: React.FC = () => {
             </AnimatedSection>
             <AnimatedSection delay={0.4}>
               <div className="mt-10">
-                <CTAButton href={checkoutUrl} className="bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 glow-shadow animate-pulse">
+                <CTAButton href={checkoutUrl} placement="final" offerKey={offerKey} className="bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 glow-shadow animate-pulse">
                   GARANTIR MEU ACESSO AGORA
                 </CTAButton>
               </div>
@@ -276,8 +288,14 @@ const App: React.FC = () => {
         </section>
       </main>
 
+      <MetaPixelConsent />
       <footer className="py-8 text-center text-gray-500 border-t border-purple-900/50">
           <p>&copy; {new Date().getFullYear()} ACERVO NEWGEN. Todos os direitos reservados.</p>
+          {hasMetaPixelConfigured() && (
+            <button type="button" onClick={openPrivacyPreferences} className="mt-3 text-xs text-purple-200 underline underline-offset-4 hover:text-white">
+              Preferências de privacidade
+            </button>
+          )}
           <p className="mt-2 text-sm">Este produto é comercializado com apoio da Kiwify. A plataforma não faz controle editorial prévio dos produtos comercializados, nem avalia a tecnicidade e experiência daqueles que os produzem.</p>
       </footer>
     </div>
