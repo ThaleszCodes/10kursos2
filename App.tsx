@@ -4,7 +4,7 @@ import { CountdownTimer } from './components/CountdownTimer';
 import { MarketingIcon, DesignIcon, FinanceIcon, AestheticsIcon, CodeIcon, EnglishIcon, InfinityIcon, NoMonthlyFeeIcon, CertificateIcon, UpdatesIcon, DevicesIcon, ShieldIcon, StarIcon, PaymentIcon, EmailIcon, RocketIcon } from './components/icons';
 
 const OFFERS = {
-  principal: { price: 'R$10,00', checkout: 'https://pay.kiwify.com.br/sjNfSYZ' },
+  principal: { price: 'R$14,90', checkout: 'https://pay.kiwify.com.br/sjNfSYZ' },
   media: { price: 'R$23,90', checkout: 'https://pay.kiwify.com.br/KSYOPLi' },
   alta: { price: 'R$34,90', checkout: 'https://pay.kiwify.com.br/n6qh8ad' },
 };
